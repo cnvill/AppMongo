@@ -4,8 +4,7 @@
     Author     : Nuria
 --%>
 
-<%@page import="BL.BLMatricula"%>
-<%@page import="BL.BLEstudiante"%>
+<%@page import="Conexion.MongoDB"%>
 <%@page import="Entidades.TEstudiante"%>
 <%@page import="java.io.File"%>
 <%@page import="org.apache.catalina.Server"%>
@@ -40,7 +39,7 @@
        <%
     if (request.getParameter("form") != null){
          java.util.Date dateInicio = new java.util.Date();
-         String totalRegistros= BLMatricula.GenerarRegistroMatricula();
+         String totalRegistros= MongoDB.GenerarRegistroMatricula();
          java.util.Date dateFin = new java.util.Date();
          String tiempo=String.valueOf((dateFin.getTime()-dateInicio.getTime())/1000);
          out.println("<label class='alert alert-success'>Se registro satisfactoriamente los registros <br/> Tiempo transcurrido: "+tiempo+" segundos </br> Total registros: "+totalRegistros+" </label>");   

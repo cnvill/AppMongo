@@ -5,7 +5,9 @@
 package Conexion;
 
 import Entidades.TAsignatura;
+import Entidades.TDetMatricula;
 import Entidades.TEstudiante;
+import Entidades.TMatricula;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -23,7 +25,8 @@ public class MongoDB {
     
     protected static MongoClient mongoCliente;
     protected static DB db;
-    
+
+   
  public MongoDB(){
      this.mongoCliente=null;
      this.db=null;
@@ -39,6 +42,8 @@ public class MongoDB {
          System.out.println("Class "+e.getMessage());
      }
  }
+ 
+
  
  public static String InsertarAsignatura(TAsignatura tasignatura){
      try {
@@ -131,6 +136,142 @@ public class MongoDB {
             Res="NO"+e.getMessage();
         }
         return Res;
+    }
+    
+     public static String RegistrarDetMatricula(TDetMatricula oDetMatricula){
+        String Res="No";
+        try {
+            AbrirBD();
+            DBCollection coll = db.getCollection("tdetmatricula");
+            BasicDBObject doc;        
+            doc = new BasicDBObject("idmatricula", oDetMatricula.getIdmatricula()).
+            append("idasignatura", oDetMatricula.getIdasignatura()).
+            append("credito",oDetMatricula.getCredito()).
+            append("estado", oDetMatricula.getEstado());
+            coll.insert(doc);
+        } catch (Exception e) {
+            Res="NO"+e.getMessage();
+        }
+        return Res;
+    }
+    
+    public ArrayList<TDetMatricula> ListaDetMatriculas(){
+        ArrayList<TDetMatricula> detMatricula= new ArrayList<TDetMatricula>();
+        try {
+            AbrirBD();
+            DBCollection colll = db.getCollection("tdetmatricula");
+            DBCursor cursor = colll.find();
+             TDetMatricula oDetMatricula;
+            while (cursor.hasNext()) { 
+                oDetMatricula = new TDetMatricula(); 
+                DBObject tobj = cursor.next();
+                oDetMatricula.setIdmatricula((Integer) tobj.get("idmatricula"));
+                oDetMatricula.setIdasignatura(tobj.get("idasignatura").toString());
+                oDetMatricula.setCredito((Integer) tobj.get("credito"));
+                oDetMatricula.setEstado((Integer) tobj.get("estado"));
+                detMatricula.add(oDetMatricula);
+            }        
+          
+        } catch (Exception e) {
+            detMatricula=null;
+            System.out.print(""+e.getMessage());
+        }
+     return detMatricula;
+    }
+    
+    public static String GenerarRegistroMatricula(){
+        String respuesta="";
+        try {
+        ArrayList<TEstudiante> listaEstudiantes= MongoDB.ListaEstudiantes(); 
+        ArrayList<TAsignatura> listaAsignaturas= MongoDB.MostrarAsignaturas();
+        TMatricula oMatricula;
+        TDetMatricula oDetMatricula;
+        int nE=listaEstudiantes.size();
+        int nA=listaAsignaturas.size();
+        int idMatricula=0;
+        respuesta =""+nE*nA;
+            for (int i = 0; i < nE; i++) {
+                oMatricula= new TMatricula();
+                idMatricula=i;
+                oMatricula.setIdmatricula(idMatricula);
+                oMatricula.setEstado(1);
+                oMatricula.setIdestudiante(listaEstudiantes.get(i).getIdestudiante());
+                oMatricula.setSemestre("III");
+                oMatricula.setTotalcreditos(i);
+                InsertMatricula(oMatricula);
+                for (int j = 0; j < nA; j++) {
+                    oDetMatricula= new TDetMatricula();
+                    oDetMatricula.setIdmatricula(idMatricula);
+                    oDetMatricula.setIdasignatura(listaAsignaturas.get(j).getIdasignatura());
+                    oDetMatricula.setEstado(1);
+                    oDetMatricula.setCredito(listaAsignaturas.get(j).getCredito());
+                    MongoDB.RegistrarDetMatricula(oDetMatricula);
+                }
+            }
+        
+        } catch (Exception e) {
+            respuesta=respuesta+e.getMessage();
+        }
+        return respuesta;
+    }
+    
+    public static String InsertMatricula(TMatricula oMatricula){
+        String resp="";
+        try {
+            AbrirBD();
+            DBCollection coll = db.getCollection("tmatricula");
+            BasicDBObject doc;        
+            doc = new BasicDBObject("semestre", oMatricula.getSemestre()).
+            append("idmatricula", oMatricula.getIdmatricula()).
+            append("idestudiante", oMatricula.getIdestudiante()).
+            append("totalcredito",oMatricula.getTotalcreditos()).
+            append("fechamtricula", Date.parse("dd/MM/yyyy") ).
+            append("estado",oMatricula.getEstado());
+            coll.insert(doc);
+            resp="OK";
+        } catch (Exception e) {
+            resp=e.getMessage();
+        }
+        return resp;
+    }
+    
+     public static ArrayList<TMatricula> ListaMatriculas(){
+        ArrayList<TMatricula> listaMatricula= new ArrayList<TMatricula>();
+        try {
+            AbrirBD();
+            DBCollection colll = db.getCollection("tmatricula");
+            DBCursor cursor = colll.find();
+             TMatricula oMatricula;
+            while (cursor.hasNext()) { 
+                oMatricula = new TMatricula(); 
+                DBObject tobj = cursor.next();
+                oMatricula.setIdmatricula((Integer) tobj.get("idmatricula"));
+                oMatricula.setSemestre(tobj.get("semestre").toString());
+                oMatricula.setIdestudiante((Integer) tobj.get("idestudiante"));
+                oMatricula.setFechamatricula((Date) tobj.get("fechamtricula"));
+                oMatricula.setEstado((Integer) tobj.get("estado"));
+                listaMatricula.add(oMatricula);
+            }        
+          
+        } catch (Exception e) {
+            listaMatricula=null;
+            System.out.print(""+e.getMessage());
+        }
+     return listaMatricula;
+    }
+     
+    public static String  getMaxIdMatricula(){
+      String resp="";
+        try {            
+            AbrirBD();
+            DBCollection colll = db.getCollection("tmatricula");
+            DBCursor cursor = colll.find();
+            DBObject tobj = cursor.next();
+            resp = (String) tobj.get("idmatricula");
+        } catch (Exception e) {
+            resp=e.getMessage();
+        }
+        return resp;
     }
     
 //public static void main( String args[] ){
