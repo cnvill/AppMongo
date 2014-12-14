@@ -9,18 +9,19 @@ HttpSession s= request.getSession();
            <span class="icon-bar"></span>
            <span class="icon-bar"></span>
          </a>
-         <a class="brand" href="#">Matrícula</a>
+         <a class="brand" href="#">Matricula</a>
        <div class="nav-collapse collapse navbar-inverse-collapse">
            <ul class="nav">                      
              <li class="dropdown">
-               <a href="asignatura" class="dropdown-toggle" data-toggle="dropdown">Asignatura </a>
+               <a href="/AppTesisMongo/View/asignatura/index.jsp" class="dropdown-toggle" >Asignatura </a>
                <!-- <ul class="dropdown-menu">
                  <li><a href="registrar/">Registrar</a></li>
                  <li><a href="prestamo.jsp">Prestamo</a></li>
                  <li><a href="devueltos.jsp">Devueltos</a></li>                          
                </ul>-->
              </li>
-             <li> <a href="listaalumno.jsp">Estudiante </a> </li>
+             <li> <a href="/AppTesisMongo/View/estudiante/index.jsp">Estudiante </a> </li>
+             <li> <a href="/AppTesisMongo/View/matricula/index.jsp">Generar Matricula </a> </li>
            </ul>               
            <ul class="nav pull-right">
              <li> 
