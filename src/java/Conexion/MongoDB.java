@@ -129,9 +129,6 @@ public static ArrayList<TEstudiante> BuscarEstudiante(String value){
             BasicDBObject q = new BasicDBObject();
             q.put("nombre",  java.util.regex.Pattern.compile(value));
             DBCursor cursor=colll.find(q);
-            //DBCursor cursor = colll.find("nombre:/"+value+"/");  
-            
-            //DBCursor cursor = objeto;
             TEstudiante oEstudiante;
             while (cursor.hasNext()) { 
                 oEstudiante = new TEstudiante(); 
@@ -149,6 +146,25 @@ public static ArrayList<TEstudiante> BuscarEstudiante(String value){
         return listaEstudiante;
     }
     
+ public static String EditarEstudiante(TEstudiante testudiante){
+     try {
+        AbrirBD();
+        DBCollection coll = db.getCollection("tbasigantura");
+        BasicDBObject qId = new BasicDBObject();
+        qId.put("idestudiante",  testudiante.getIdestudiante().toString());
+        BasicDBObject qUpdate = new BasicDBObject();
+        qUpdate.put("codigo", testudiante.getCodigo());
+        qUpdate.put("nombre", testudiante.getNombre());
+        qUpdate.put("apellidos", testudiante.getApellidos());
+        coll.update(qId, qUpdate);
+        return "OK";
+     } catch (Exception e) {
+         
+         System.out.println("Error al insertar "+e.getMessage());
+         return null;
+     }
+ }
+
     public static String RegistrarEstudiante(TEstudiante oEstudiante){
         String Res="No";
         try {
