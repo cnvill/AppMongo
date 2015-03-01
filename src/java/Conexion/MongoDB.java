@@ -118,6 +118,33 @@ public class MongoDB {
         return listaEstudiante;
     }
     
+ 
+public static ArrayList<TEstudiante> BuscarEstudiante(String value){
+        ArrayList<TEstudiante> listaEstudiante= new ArrayList<TEstudiante>();
+        try {
+            
+            AbrirBD();
+            DBCollection colll = db.getCollection("testudiante");            
+            DBCursor cursor = (DBCursor) colll.findOne(new BasicDBObject("nombre", value));  
+            
+            //DBCursor cursor = objeto;
+            TEstudiante oEstudiante;
+            while (cursor.hasNext()) { 
+                oEstudiante = new TEstudiante(); 
+                DBObject tobj = cursor.next();
+                oEstudiante.setCodigo((String) tobj.get("codigo"));
+                oEstudiante.setNombre(tobj.get("nombre").toString());
+                oEstudiante.setApellidos((String) tobj.get("apellidos"));
+                oEstudiante.setFechanacimiento((Date) tobj.get("fechanacimiento"));
+                oEstudiante.setEstado((Integer) tobj.get("estado"));
+                listaEstudiante.add(oEstudiante);
+            }        
+        }catch (Exception e) {
+            e.getMessage();
+        }
+        return listaEstudiante;
+    }
+    
     public static String RegistrarEstudiante(TEstudiante oEstudiante){
         String Res="No";
         try {
