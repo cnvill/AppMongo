@@ -28,7 +28,6 @@
          Boolean r=(request.getParameter("txtcodigo")!="" && request.getParameter("txtcodigo")!=null); 
          if(r){
              TEstudiante oEstudiante= new TEstudiante();
-             oEstudiante.setIdestudiante(Integer.parseInt(request.getParameter("txtIdEstudiante").toString()));
              oEstudiante.setCodigo(request.getParameter("txtcodigo"));
              oEstudiante.setNombre(request.getParameter("txtnombre"));             
              oEstudiante.setApellidos(request.getParameter("txtapellidos"));
@@ -54,11 +53,11 @@
                 <h4>Editar Estudiante </h4>
                 <%                
                 TEstudiante oEstudiate= new TEstudiante();
-                oEstudiate= BLEstudiante.GetEstudiante(request.getParameter("idestudiante"));
+                oEstudiate= MongoDB.GetEstudiante(request.getParameter("idestudiante"));
                 %>
                 <div class="row-fluid">
                     <label for="txtcodigo">Codigo:</label>
-                    <input type="hidden" name="txtIdEstudiante" value="<%=oEstudiate.getIdestudiante()%>" >
+                    <input type="hidden" name="txtIdEstudiante" value="<%=oEstudiate.getCodigo()%>" >
                     <input type="text" name="txtcodigo" placeholder="Ingrese codigo" value="<%=oEstudiate.getCodigo()%>" style="height: 30px;" class="input-xlarge" required>
                 </div>
                 <div class="row-fluid">

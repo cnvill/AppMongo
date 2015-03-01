@@ -56,7 +56,7 @@
                                  {   
                                  %>
                                  <tr>
-                                     <td> <a href="editar.jsp?idestudiante=<%=lEstudiante.get(cont).getIdestudiante()%>"><%=lEstudiante.get(cont).getCodigo() %> </a> </td>
+                                     <td> <a href="editar.jsp?idestudiante=<%=lEstudiante.get(cont).getCodigo()%>"><%=lEstudiante.get(cont).getCodigo() %> </a> </td>
                                      <td><%=lEstudiante.get(cont).getNombre() %></td>
                                     <td><%=lEstudiante.get(cont).getApellidos() %></td>                                    
                                     <td><%=lEstudiante.get(cont).getDni()%></td>  
