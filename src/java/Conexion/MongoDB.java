@@ -125,7 +125,11 @@ public static ArrayList<TEstudiante> BuscarEstudiante(String value){
             
             AbrirBD();
             DBCollection colll = db.getCollection("testudiante");            
-            DBCursor cursor = (DBCursor) colll.findOne(new BasicDBObject("nombre", value));  
+           
+            BasicDBObject q = new BasicDBObject();
+            q.put("nombre",  java.util.regex.Pattern.compile(value));
+            DBCursor cursor=colll.find(q);
+            //DBCursor cursor = colll.find("nombre:/"+value+"/");  
             
             //DBCursor cursor = objeto;
             TEstudiante oEstudiante;
