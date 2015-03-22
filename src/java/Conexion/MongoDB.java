@@ -36,7 +36,7 @@ public class MongoDB {
      try {
          
          MongoDB.mongoCliente = new MongoClient( "localhost" , 27017 );         
-         db = mongoCliente.getDB( "datos" );
+         db = mongoCliente.getDB( "mongotresmil" );
          
      } catch (Exception e) {
          System.out.println("Class "+e.getMessage());
