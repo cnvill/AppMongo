@@ -14,7 +14,7 @@ public class TMatricula {
     
     private Integer idmatricula;
     private String semestre;
-    private Integer idestudiante;
+    private String idestudiante;
     private Integer totalcreditos;
     private Date fechamatricula;
     private Integer estado;
@@ -50,7 +50,7 @@ public class TMatricula {
     /**
      * @return the idestudiante
      */
-    public Integer getIdestudiante() {
+    public String getIdestudiante() {
         return idestudiante;
     }
 
@@ -58,7 +58,7 @@ public class TMatricula {
      * @param idestudiante the idestudiante to set
      */
     public void setIdestudiante(Integer idestudiante) {
-        this.idestudiante = idestudiante;
+        this.setIdestudiante(idestudiante);
     }
 
     /**
@@ -101,5 +101,12 @@ public class TMatricula {
      */
     public void setEstado(Integer estado) {
         this.estado = estado;
+    }
+
+    /**
+     * @param idestudiante the idestudiante to set
+     */
+    public void setIdestudiante(String idestudiante) {
+        this.idestudiante = idestudiante;
     }
 }

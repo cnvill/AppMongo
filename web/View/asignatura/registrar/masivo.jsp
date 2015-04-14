@@ -4,6 +4,7 @@
     Author     : Nuria
 --%>
 
+<%@page import="javax.xml.parsers.DocumentBuilder"%>
 <%@page import="Conexion.MongoDB"%>
 <%@page import="java.io.File"%>
 <%@page import="org.apache.catalina.Server"%>
@@ -22,6 +23,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="Entidades.TAsignatura"%>
 
+<%@page import="javax.xml.parsers.DocumentBuilderFactory"%>
+<%@page import="org.w3c.dom.Document"%>
+<%@page import="org.w3c.dom.NodeList"%>
+<%@page import="org.w3c.dom.Node"%>
+<%@page import="org.w3c.dom.Element"%>
+<%@page import="java.io.File"%>
+<%@page import="org.apache.catalina.Server"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -105,6 +113,49 @@
             out.println("<label class='alert alert-success'>Se registro satisfactoriamente los registros <br/> Tiempo transcurrido: "+tiempo+" segundos </br> Total registros: "+totalRegistros+" </label>");
             
            
+            }else
+            if(item.getContentType().equalsIgnoreCase("text/xml")){
+                 /*cual sera la ruta al archivo en el servidor*/
+            File archivo_server = new File( getServletContext().getRealPath("/Archivos")+File.separator+item.getName());
+            item.write(archivo_server);
+            
+            String fXmlFile=archivo_server.toPath().toString();
+            
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
+            
+            doc.getDocumentElement().normalize();
+
+            
+            java.util.Date dateInicio = new java.util.Date();
+            NodeList nList = doc.getElementsByTagName("table");
+            int totalRegistros=0;
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);                    
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    
+                        TAsignatura oAsignatura= new TAsignatura();
+                        oAsignatura.setIdasignatura(eElement.getElementsByTagName("column").item(0).getTextContent().toString());
+                        oAsignatura.setNombre(eElement.getElementsByTagName("column").item(1).getTextContent().toString());
+                        oAsignatura.setCredito(Integer.parseInt(eElement.getElementsByTagName("column").item(2).getTextContent().toString()));
+                        oAsignatura.setHorasteorica(Integer.parseInt(eElement.getElementsByTagName("column").item(3).getTextContent().toString()));
+                        oAsignatura.setHoraspractica(Integer.parseInt(eElement.getElementsByTagName("column").item(5).getTextContent().toString()));
+                        oAsignatura.setHoraslaboratorio(Integer.parseInt(eElement.getElementsByTagName("column").item(6).getTextContent().toString()));
+                        oAsignatura.setCiclo(eElement.getElementsByTagName("column").item(7).getTextContent().toString());                     
+                        oAsignatura.setEstado(Integer.parseInt(eElement.getElementsByTagName("column").item(8).getTextContent().toString()));                     
+                        
+                        MongoDB.InsertarAsignatura(oAsignatura);                        
+                        totalRegistros++;
+                        
+             }
+           }
+            
+            java.util.Date dateFin = new java.util.Date();
+            String tiempo=String.valueOf((dateFin.getTime()-dateInicio.getTime())/1000);
+            out.println("<label class='alert alert-success'>Se registro satisfactoriamente los registros <br/> Tiempo transcurrido: "+tiempo+" segundos </br> Total registros: "+totalRegistros+" </label>");
+         
             }
             else
             {

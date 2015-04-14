@@ -36,7 +36,7 @@ public class MongoDB {
      try {
          
          MongoDB.mongoCliente = new MongoClient( "localhost" , 27017 );         
-         db = mongoCliente.getDB( "mongotresmil" );
+         db = mongoCliente.getDB( "bdmarzo" );
          
      } catch (Exception e) {
          System.out.println("Class "+e.getMessage());
@@ -108,7 +108,7 @@ public class MongoDB {
                 oEstudiante.setCodigo((String) tobj.get("codigo"));
                 oEstudiante.setNombre(tobj.get("nombre").toString());
                 oEstudiante.setApellidos((String) tobj.get("apellidos"));
-                oEstudiante.setFechanacimiento((Date) tobj.get("fechanacimiento"));
+                oEstudiante.setFechanacimiento((String) tobj.get("fechanacimiento"));
                 oEstudiante.setEstado((Integer) tobj.get("estado"));
                 listaEstudiante.add(oEstudiante);
             }        
@@ -136,7 +136,7 @@ public static ArrayList<TEstudiante> BuscarEstudiante(String value){
                 oEstudiante.setNombre(tobj.get("nombre").toString());
                 oEstudiante.setApellidos((String) tobj.get("apellidos"));
                 oEstudiante.setDni((String) tobj.get("dni"));
-                oEstudiante.setFechanacimiento((Date) tobj.get("fechanacimiento"));
+                oEstudiante.setFechanacimiento((String) tobj.get("fechanacimiento"));
                 oEstudiante.setEstado((Integer) tobj.get("estado"));
                 listaEstudiante.add(oEstudiante);
             }        
@@ -156,7 +156,9 @@ public static ArrayList<TEstudiante> BuscarEstudiante(String value){
         qUpdate.put("codigo", testudiante.getCodigo());
         qUpdate.put("nombre", testudiante.getNombre());
         qUpdate.put("apellidos", testudiante.getApellidos());
+        qUpdate.put("fechanacimiento", testudiante.getFechanacimiento());
         qUpdate.put("dni", testudiante.getDni());
+        qUpdate.put("estado", testudiante.getEstado());
         coll.update(qId, qUpdate);
         return "OK";
      } catch (Exception e) {
@@ -181,7 +183,7 @@ public static TEstudiante  GetEstudiante(String idEstudiante){
                 oEstudiante.setNombre(tobj.get("nombre").toString());
                 oEstudiante.setApellidos((String) tobj.get("apellidos"));
                 oEstudiante.setDni((String) tobj.get("dni"));
-                oEstudiante.setFechanacimiento((Date) tobj.get("fechanacimiento"));
+                oEstudiante.setFechanacimiento((String) tobj.get("fechanacimiento"));
                 oEstudiante.setEstado((Integer) tobj.get("estado"));
                 
             }        
@@ -212,17 +214,20 @@ public static TEstudiante  GetEstudiante(String idEstudiante){
         return Res;
     }
     
-     public static String RegistrarDetMatricula(TDetMatricula oDetMatricula){
+    public static String RegistrarDetMatricula(TDetMatricula oDetMatricula){
         String Res="No";
         try {
-            AbrirBD();
+//            AbrirBD();
             DBCollection coll = db.getCollection("tdetmatricula");
             BasicDBObject doc;        
-            doc = new BasicDBObject("idmatricula", oDetMatricula.getIdmatricula()).
+            doc = new BasicDBObject("iddetmatricula", oDetMatricula.getIddetmatricula()).
+            append("idmatricula", oDetMatricula.getIdmatricula()).
             append("idasignatura", oDetMatricula.getIdasignatura()).
             append("credito",oDetMatricula.getCredito()).
             append("estado", oDetMatricula.getEstado());
             coll.insert(doc);
+            Res="OK";
+            db.cleanCursors(true);
         } catch (Exception e) {
             Res="NO"+e.getMessage();
         }
@@ -269,17 +274,20 @@ public static TEstudiante  GetEstudiante(String idEstudiante){
                 idMatricula=i;
                 oMatricula.setIdmatricula(idMatricula);
                 oMatricula.setEstado(1);
-                oMatricula.setIdestudiante(listaEstudiantes.get(i).getIdestudiante());
+                oMatricula.setIdestudiante(listaEstudiantes.get(i).getCodigo());
                 oMatricula.setSemestre("III");
                 oMatricula.setTotalcreditos(i);
-                InsertMatricula(oMatricula);
+                MongoDB.InsertMatricula(oMatricula);
+                
                 for (int j = 0; j < nA; j++) {
                     oDetMatricula= new TDetMatricula();
+                    oDetMatricula.setIddetmatricula(j);
                     oDetMatricula.setIdmatricula(idMatricula);
                     oDetMatricula.setIdasignatura(listaAsignaturas.get(j).getIdasignatura());
                     oDetMatricula.setEstado(1);
                     oDetMatricula.setCredito(listaAsignaturas.get(j).getCredito());
-                    MongoDB.RegistrarDetMatricula(oDetMatricula);
+                    String rs=MongoDB.RegistrarDetMatricula(oDetMatricula);
+                    System.out.println("inser "+rs);
                 }
             }
         
@@ -289,19 +297,20 @@ public static TEstudiante  GetEstudiante(String idEstudiante){
         return respuesta;
     }
     
-    public static String InsertMatricula(TMatricula oMatricula){
+   public static String InsertMatricula(TMatricula oMatricula){
         String resp="";
         try {
-            AbrirBD();
+            AbrirBD();        
             DBCollection coll = db.getCollection("tmatricula");
             BasicDBObject doc;        
-            doc = new BasicDBObject("semestre", oMatricula.getSemestre()).
-            append("idmatricula", oMatricula.getIdmatricula()).
+            doc = new BasicDBObject("idmatricula", oMatricula.getIdmatricula()).
+            append("semestre", oMatricula.getSemestre()).
             append("idestudiante", oMatricula.getIdestudiante()).
             append("totalcredito",oMatricula.getTotalcreditos()).
-            append("fechamtricula", Date.parse("dd/MM/yyyy") ).
+            append("fechamtricula", oMatricula.getFechamatricula()).
             append("estado",oMatricula.getEstado());
             coll.insert(doc);
+          
             resp="OK";
         } catch (Exception e) {
             resp=e.getMessage();
@@ -347,13 +356,10 @@ public static TEstudiante  GetEstudiante(String idEstudiante){
         }
         return resp;
     }
-    
+//    
 //public static void main( String args[] ){
 //     
-//       ArrayList<TAsignatura> tAsignatura=MongoDB.MostrarAsignaturas();
-//        for(int cont=0;cont<tAsignatura.size();cont++)
-//                {                                
-//                    System.out.println(tAsignatura.get(cont).getIdasignatura());
-//           }
-//        }
+//   String res=   MongoDB.GenerarRegistroMatricula();
+//      System.out.print(res);
+//}
 }

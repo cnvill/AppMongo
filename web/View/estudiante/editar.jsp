@@ -27,16 +27,21 @@
        <%
          Boolean r=(request.getParameter("txtcodigo")!="" && request.getParameter("txtcodigo")!=null); 
          if(r){
+                java.util.Date dateInicio = new java.util.Date();
+             
              TEstudiante oEstudiante= new TEstudiante();
              oEstudiante.setCodigo(request.getParameter("txtcodigo"));
              oEstudiante.setNombre(request.getParameter("txtnombre"));             
              oEstudiante.setApellidos(request.getParameter("txtapellidos"));
              oEstudiante.setDni(request.getParameter("txtdni"));
+             oEstudiante.setFechanacimiento(request.getParameter("txtFechaNacimiento"));
              oEstudiante.setEstado(Integer.parseInt(request.getParameter("cbestado")));
              String resp=MongoDB.EditarEstudiante(oEstudiante);
             if(resp=="OK")
             {  HttpSession s= request.getSession();
-                    s.setAttribute("respuesta_registro", "Registro satisfactorio");
+                     java.util.Date dateFin = new java.util.Date();
+                    String tiempo=String.valueOf((dateFin.getTime()-dateInicio.getTime()));
+                    s.setAttribute("respuesta_registro", "Tiempo transcurrido en Editar: "+tiempo+" Milisegundos");
                     response.sendRedirect("index.jsp");
             }else
             {
@@ -74,7 +79,7 @@
                 </div>
                 <div class="row-fluid">
                     <label for="txtFechaNacimiento">Fecha Nacimiento:</label>
-                    <input type="dae" name="txtFechaNacimiento"  value="<%=oEstudiate.getFechanacimiento()%>" placeholder="Igrese Fecha Nacimiento"  style="height: 30px;" class="input-xlarge" required>
+                    <input type="date" name="txtFechaNacimiento"  value="<%=oEstudiate.getFechanacimiento()%>" placeholder="Igrese Fecha Nacimiento"  style="height: 30px;" class="input-xlarge" required>
                 </div>
                 <div class="row-fluid">
                     <label for="cbestado">Estado:</label>

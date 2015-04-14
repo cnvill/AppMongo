@@ -70,7 +70,12 @@
                            %>
                     <div> Tiempo Transcurrido: <%=tiempoRespueta%> Milisegundos</div>
                             <%
-                         
+                       
+                           }
+                        HttpSession s= request.getSession();
+                           if(s.getAttribute("respuesta_registro")!=null){
+                                out.println(s.getAttribute("respuesta_registro"));
+                                s.setAttribute("respuesta_registro", null);
                            }
                         %>
                     </tbody>

@@ -17,7 +17,7 @@ public class TEstudiante {
     private String nombre;
     private String apellidos;
     private String dni;
-    private Date fechanacimiento;
+    private String fechanacimiento;
     private Integer estado;
 
     /**
@@ -93,14 +93,14 @@ public class TEstudiante {
     /**
      * @return the fechanacimiento
      */
-    public Date getFechanacimiento() {
+    public String getFechanacimiento() {
         return fechanacimiento;
     }
 
     /**
      * @param fechanacimiento the fechanacimiento to set
      */
-    public void setFechanacimiento(Date fechanacimiento) {
+    public void setFechanacimiento(String fechanacimiento) {
         this.fechanacimiento = fechanacimiento;
     }
 
